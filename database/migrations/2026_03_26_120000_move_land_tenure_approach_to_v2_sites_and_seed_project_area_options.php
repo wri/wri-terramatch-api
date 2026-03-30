@@ -8,16 +8,24 @@ use App\Models\V2\I18n\I18nItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
+    /**
+     * Avoid wrapping this migration in a connection transaction when the schema grammar supports it.
+     * DDL (ALTER/DROP) on MySQL/MariaDB performs implicit commits; nesting explicit transactions
+     * afterward has caused migrator/CI failures. DML below is idempotent (firstOrCreate / existence checks).
+     *
+     * @var bool
+     */
+    public $withinTransaction = false;
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        // MySQL auto-commits DDL (ALTER TABLE), so avoid wrapping Schema operations in a transaction.
+        // MySQL/MariaDB: DDL is not fully transactional (implicit commits). Do not wrap Schema calls in DB::transaction.
         if (! Schema::hasColumn('v2_sites', 'land_tenure_approach')) {
             Schema::table('v2_sites', function (Blueprint $table): void {
                 $table->text('land_tenure_approach')->nullable();
@@ -43,62 +51,60 @@ return new class () extends Migration {
             'other-land' => 'Other Land',
         ];
 
-        DB::transaction(function () use ($options): void {
-            $optionList = FormOptionList::where('key', 'land-tenures')->first();
-            if ($optionList) {
-                foreach ($options as $slug => $label) {
-                    $option = FormOptionListOption::firstOrCreate(
-                        [
-                            'form_option_list_id' => $optionList->id,
-                            'slug' => $slug,
-                        ],
-                        [
-                            'label' => $label,
-                        ]
-                    );
-
-                    if (empty($option->label_id)) {
-                        $option->label_id = $this->generateIfMissingI18nItem($option, 'label');
-                        $option->save();
-                    }
-                }
-            }
-
-            // TM-2862: project land tenure area options are configured on form_question_id = 4221
-            $question = FormQuestion::where('id', 4221)->first();
-            if ($question) {
-                $questionId = (int) $question->id;
-                $nextOrder = (int) FormQuestionOption::where('form_question_id', $questionId)->max('order');
-
-                foreach ($options as $slug => $label) {
-                    $existing = FormQuestionOption::where('form_question_id', $questionId)
-                        ->where('slug', $slug)
-                        ->first();
-
-                    if ($existing) {
-                        if (empty($existing->label_id)) {
-                            $existing->label_id = $this->generateIfMissingI18nItem($existing, 'label');
-                            $existing->save();
-                        }
-
-                        continue;
-                    }
-
-                    $nextOrder++;
-                    $questionOption = FormQuestionOption::create([
-                        'form_question_id' => $questionId,
-                        'order' => $nextOrder,
+        $optionList = FormOptionList::where('key', 'land-tenures')->first();
+        if ($optionList) {
+            foreach ($options as $slug => $label) {
+                $option = FormOptionListOption::firstOrCreate(
+                    [
+                        'form_option_list_id' => $optionList->id,
                         'slug' => $slug,
+                    ],
+                    [
                         'label' => $label,
-                    ]);
+                    ]
+                );
 
-                    if (empty($questionOption->label_id)) {
-                        $questionOption->label_id = $this->generateIfMissingI18nItem($questionOption, 'label');
-                        $questionOption->save();
-                    }
+                if (empty($option->label_id)) {
+                    $option->label_id = $this->generateIfMissingI18nItem($option, 'label');
+                    $option->save();
                 }
             }
-        });
+        }
+
+        // TM-2862: project land tenure area options are configured on form_question_id = 4221
+        $question = FormQuestion::where('id', 4221)->first();
+        if ($question) {
+            $questionId = (int) $question->id;
+            $nextOrder = (int) FormQuestionOption::where('form_question_id', $questionId)->max('order');
+
+            foreach ($options as $slug => $label) {
+                $existing = FormQuestionOption::where('form_question_id', $questionId)
+                    ->where('slug', $slug)
+                    ->first();
+
+                if ($existing) {
+                    if (empty($existing->label_id)) {
+                        $existing->label_id = $this->generateIfMissingI18nItem($existing, 'label');
+                        $existing->save();
+                    }
+
+                    continue;
+                }
+
+                $nextOrder++;
+                $questionOption = FormQuestionOption::create([
+                    'form_question_id' => $questionId,
+                    'order' => $nextOrder,
+                    'slug' => $slug,
+                    'label' => $label,
+                ]);
+
+                if (empty($questionOption->label_id)) {
+                    $questionOption->label_id = $this->generateIfMissingI18nItem($questionOption, 'label');
+                    $questionOption->save();
+                }
+            }
+        }
     }
 
     /**
@@ -106,7 +112,7 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        // MySQL auto-commits DDL (ALTER TABLE), so avoid wrapping Schema operations in a transaction.
+        // MySQL/MariaDB: DDL is not fully transactional (implicit commits).
         if (! Schema::hasColumn('v2_projects', 'land_tenure_approach')) {
             Schema::table('v2_projects', function (Blueprint $table): void {
                 $table->text('land_tenure_approach')->nullable();
@@ -132,21 +138,19 @@ return new class () extends Migration {
             'other-land',
         ];
 
-        DB::transaction(function () use ($slugs): void {
-            $optionList = FormOptionList::where('key', 'land-tenures')->first();
-            if ($optionList) {
-                FormOptionListOption::where('form_option_list_id', $optionList->id)
-                    ->whereIn('slug', $slugs)
-                    ->delete();
-            }
+        $optionList = FormOptionList::where('key', 'land-tenures')->first();
+        if ($optionList) {
+            FormOptionListOption::where('form_option_list_id', $optionList->id)
+                ->whereIn('slug', $slugs)
+                ->delete();
+        }
 
-            $question = FormQuestion::where('id', 4221)->first();
-            if ($question) {
-                FormQuestionOption::where('form_question_id', (int) $question->id)
-                    ->whereIn('slug', $slugs)
-                    ->delete();
-            }
-        });
+        $question = FormQuestion::where('id', 4221)->first();
+        if ($question) {
+            FormQuestionOption::where('form_question_id', (int) $question->id)
+                ->whereIn('slug', $slugs)
+                ->delete();
+        }
     }
 
     private function generateIfMissingI18nItem(Model $target, string $property): ?int
