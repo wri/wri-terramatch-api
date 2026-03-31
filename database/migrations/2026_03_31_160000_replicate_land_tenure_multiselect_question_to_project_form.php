@@ -70,10 +70,14 @@ return new class extends Migration {
         $targets = FormQuestion::query()
             ->with(['options', 'tableHeaders'])
             ->where('linked_field_key', self::TARGET_LINKED_FIELD_KEY)
-            ->whereHas('section', function ($q): void {
-                $q->whereHas('form', function ($q2): void {
-                    $q2->where('type', Form::TYPE_PROJECT);
-                });
+            ->whereExists(function ($q): void {
+                $q->selectRaw('1')
+                    ->from('form_sections')
+                    ->join('forms', 'forms.uuid', '=', 'form_sections.form_id')
+                    ->whereColumn('form_sections.id', 'form_questions.form_section_id')
+                    ->where('forms.type', Form::TYPE_PROJECT)
+                    ->whereNull('forms.deleted_at')
+                    ->whereNull('form_sections.deleted_at');
             })
             ->get();
 
