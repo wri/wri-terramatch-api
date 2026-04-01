@@ -165,7 +165,7 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'landowner_agreement',
         'nursery_seedlings_goal',
         'bioecology_product_list',
-        'bioecology_product_description'
+        'bioecology_product_description',
     ];
 
     public $fileConfiguration = [

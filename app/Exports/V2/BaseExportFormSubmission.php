@@ -76,6 +76,7 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                 case 'allBeneficiaries':
                 case 'trainingBeneficiaries':
                 case 'indirectBeneficiaries':
+                case 'elpBeneficiaries':
                     $list = [];
                     $tracking = $answer->first();
                     if ($tracking == null) {
@@ -103,6 +104,21 @@ abstract class BaseExportFormSubmission implements WithHeadings, WithMapping
                     }
 
                     return implode('|', $list);
+
+                case 'livelihoodActivities':
+                    $tracking = $answer->first();
+                    if ($tracking == null) {
+                        return '';
+                    }
+
+                    $livelihoods = [];
+                    foreach ($tracking->entries as $entry) {
+                        if ($entry->type == 'livelihoods') {
+                            $livelihoods[$entry['type']] = $entry->amount;
+                        }
+                    }
+
+                    return 'livelihoods:(' . implode(')(', $livelihoods) . ')';
 
                 case 'hectares':
                 case 'trees':
