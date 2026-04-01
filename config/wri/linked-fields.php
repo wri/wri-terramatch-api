@@ -756,6 +756,8 @@ return [
                 'pro-consortium' => ['property' => 'consortium', 'label' => 'Consortium information', 'input_type' => 'long-text'],
                 'pro-landowner-agreement' => ['property' => 'landowner_agreement', 'label' => 'Prior agreement with landowner', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'landowner-collection'],
                 'pro-nursery-seedlings-goal' => ['property' => 'nursery_seedlings_goal', 'label' => 'Nursery seedlings goal', 'input_type' => 'number'],
+                'pro-bioeconomy-product-list' => ['property' => 'bioeconomy_product_list', 'label' => 'Bioeconomy product list', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'bioeconomy-product-list'],
+                'pro-bioeconomy-product-description' => ['property' => 'bioeconomy_product_description', 'label' => 'Bioeconomy product description', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'pro-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
@@ -945,7 +947,8 @@ return [
                 'pro-rep-beneficiaries-training-other' => ['property' => 'beneficiaries_training_other', 'label' => 'Other Gender Trained', 'input_type' => 'number'],
                 'pro-rep-beneficiaries-training-youth' => ['property' => 'beneficiaries_training_youth', 'label' => 'Youth Trained', 'input_type' => 'number'],
                 'pro-rep-beneficiaries-training-non-youth' => ['property' => 'beneficiaries_training_non_youth', 'label' => 'Non Youth Trained', 'input_type' => 'number'],
-                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'Planting status','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'], 
+                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'Planting status','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'],
+                'pro-rep-elp-description' => ['property' => 'elp_description', 'label' => 'ELP description','input_type' => 'long-text'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [

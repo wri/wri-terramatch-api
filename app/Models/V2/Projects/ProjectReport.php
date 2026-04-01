@@ -166,6 +166,7 @@ class ProjectReport extends Model implements MediaModel, AuditableContract, Repo
         'beneficiaries_training_other',
         'beneficiaries_training_youth',
         'beneficiaries_training_non_youth',
+        'elp_description',
 
         // virtual (see HasDemographics trait)
         'other_workdays_description',
