@@ -203,6 +203,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'consortium_partnership_agreements' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
     ];
 
     public $casts = [

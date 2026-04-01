@@ -20,19 +20,10 @@ use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
-use App\Http\Controllers\V2\Organisations\OrganisationApprovedUsersController;
-use App\Http\Controllers\V2\Organisations\OrganisationListRequestedUsersController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
-use App\Http\Controllers\V2\Projects\ProjectInviteAcceptController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
-use App\Http\Controllers\V2\User\AdminResetPasswordController;
-use App\Http\Controllers\V2\User\AdminUserController;
-use App\Http\Controllers\V2\User\AdminUserCreationController;
-use App\Http\Controllers\V2\User\AdminUserMultiController;
-use App\Http\Controllers\V2\User\AdminUsersOrganizationController;
-use App\Http\Controllers\V2\User\AdminVerifyUserController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
 use Illuminate\Support\Facades\Route;
@@ -59,15 +50,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
     });
 
-    Route::prefix('users')->group(function () {
-        Route::get('multi', AdminUserMultiController::class);
-        Route::put('reset-password/{user}', AdminResetPasswordController::class);
-        Route::patch('verify/{user}', AdminVerifyUserController::class);
-        Route::get('users-organisation-list/{organisation}', AdminUsersOrganizationController::class);
-        Route::post('/create', [AdminUserCreationController::class, 'store']);
-    });
-    Route::resource('users', AdminUserController::class);
-
     Route::prefix('forms')->group(function () {
         Route::get('submissions/{form}/export', ExportFormSubmissionController::class);
         Route::get('applications/{fundingProgramme}/export', AdminExportApplicationController::class);
@@ -75,11 +57,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 });
 
 /** NON ADMIN ROUTES */
-Route::prefix('organisations')->group(function () {
-    Route::get('user-requests/{organisation}', OrganisationListRequestedUsersController::class);
-    Route::get('approved-users/{organisation}', OrganisationApprovedUsersController::class);
-});
-
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 
 Route::prefix('ownership-stake')->group(function () {
@@ -97,8 +74,6 @@ Route::prefix('leaderships')->group(function () {
 Route::patch('financial-indicators', UpsertFinancialIndicatorsController::class);
 
 Route::prefix('projects')->group(function () {
-    Route::post('/invite/accept', ProjectInviteAcceptController::class);
-
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
     Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
 });

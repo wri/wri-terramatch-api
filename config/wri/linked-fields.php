@@ -131,6 +131,8 @@ return [
                 'org-bioeconomy-traditional-knowledge' => ['property' => 'bioeconomy_traditional_knowledge', 'label' => 'Traditional Knowledge within the bioeconomy production process', 'input_type' => 'long-text'],
                 'org-bioeconomy-product-processing' => ['property' => 'bioeconomy_product_processing', 'label' => 'How bioeconomy products are processed before selling', 'input_type' => 'long-text'],
                 'org-bioeconomy-buyers' => ['property' => 'bioeconomy_buyers', 'label' => 'Buyers of the bioeconomy products', 'input_type' => 'text'],
+                'org-bioeconomy-product-list' => ['property' => 'bioeconomy_product_list', 'label' => 'Bioeconomy product list', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'bioeconomy-product-list'],
+                'org-bioeconomy-description' => ['property' => 'bioeconomy_description', 'label' => 'Bioeconomy description', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'org-fcol-cover' => ['property' => 'cover', 'label' => 'Cover image', 'input_type' => 'file', 'multichoice' => false],
@@ -156,6 +158,7 @@ return [
                 'org-organogram' => ['property' => 'organogram', 'label' => 'Organisation structure/diagram', 'input_type' => 'file', 'multichoice' => true],
                 'org-ownership-documents' => ['property' => 'ownership_documents', 'label' => 'Ownership documentation upload', 'input_type' => 'file', 'multichoice' => true],
                 'org-carbon-credits-proofs' => ['property' => 'carbon_credits_proof', 'label' => 'Proof of carbon credit issuing in past', 'input_type' => 'file', 'multichoice' => true],
+                'org-additional-financial-documentation' => ['property' => 'additional_financial_documentation', 'label' => 'Additional financial documentation', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'org-funding-types' => [
@@ -594,6 +597,7 @@ return [
                 'pro-pit-fcol-rest-photos' => ['property' => 'restoration_photos', 'label' => 'Past Restoration Photos', 'input_type' => 'file', 'multichoice' => true],
                 'pro-pit-fcol-detail-proj-bdgt' => ['property' => 'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
                 'pro-pit-proof-of-land-tenure-mou' => ['property' => 'proof_of_land_tenure_mou', 'label' => 'Proof of land tenure MOU', 'input_type' => 'file', 'multichoice' => true],
+                'pro-pit-consortium-partnership-agreements' => ['property' => 'consortium_partnership_agreements', 'label' => 'Consortium agreements', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'pro-pit-tree-species' => [
@@ -765,6 +769,7 @@ return [
                 // new collections
                 'pro-col-detailed-project-budget' => ['property' => 'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
                 'pro-col-proof-of-land-tenure-mou' => ['property' => 'proof_of_land_tenure_mou', 'label' => 'Documentation on project area’s land tenure', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-consortium-partnership-agreements' => ['property' => 'consortium_partnership_agreements', 'label' => 'Consortium agreements', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'pro-pit-rel-tree-species' => [
@@ -773,6 +778,13 @@ return [
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
+                ],
+                'pro-rel-non-tree-species' => [
+                    'property' => 'nonTreeSpecies',
+                    'label' => 'Non-Tree Species',
+                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
+                    'input_type' => 'treeSpecies',
+                    'collection' => 'non-tree',
                 ],
                 'pro-all-jobs' => [
                     'property' => 'jobsAll',
@@ -1378,6 +1390,13 @@ return [
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
+                ],
+                'site-rep-rel-anr-tree-species' => [
+                    'property' => 'anrTreeSpecies',
+                    'label' => 'Regenerating Species',
+                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
+                    'input_type' => 'treeSpecies',
+                    'collection' => 'anr',
                 ],
                 'site-rep-rel-non-tree-species' => [
                     'property' => 'nonTreeSpecies',

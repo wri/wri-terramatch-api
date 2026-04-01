@@ -30,7 +30,6 @@ class Handler extends ExceptionHandler
         ModelNotFoundException::class,
         MethodNotAllowedHttpException::class,
         ThrottleRequestsException::class,
-        InviteAlreadyAcceptedException::class,
         ExternalAPIException::class,
         SamePasswordException::class,
         HttpException::class,
@@ -148,10 +147,6 @@ class Handler extends ExceptionHandler
                 return JsonResponseHelper::error($exception->errors(), 422);
             case ThrottleRequestsException::class:
                 return JsonResponseHelper::error([], 429);
-            case InviteAlreadyAcceptedException::class:
-                $errors = ErrorHelper::create('*', 'monitoring invite', 'ALREADY_ACCEPTED', 'has already been accepted');
-
-                return JsonResponseHelper::error($errors, 422);
             case ExternalAPIException::class:
                 $errors = ErrorHelper::create('*', 'external API', 'EXTERNAL_API', 'has returned a server error');
 
