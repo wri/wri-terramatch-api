@@ -35,7 +35,9 @@ class Tracking extends Model
     public const ALL_BENEFICIARIES_TYPE = 'all-beneficiaries';
     public const TRAINING_BENEFICIARIES_TYPE = 'training-beneficiaries';
     public const INDIRECT_BENEFICIARIES_TYPE = 'indirect-beneficiaries';
+    public const ELP_BENEFICIARIES_TYPE = 'elp-beneficiaries';
     public const ASSOCIATES_TYPE = 'associates';
+    public const LIVELIHOOD_ACTIVITIES = 'livelihood-activities';
 
     public const VALID_TYPES = [
         self::WORKDAY_TYPE,
@@ -46,6 +48,8 @@ class Tracking extends Model
         self::ALL_BENEFICIARIES_TYPE,
         self::TRAINING_BENEFICIARIES_TYPE,
         self::INDIRECT_BENEFICIARIES_TYPE,
+        self::ELP_BENEFICIARIES_TYPE,
+        self::LIVELIHOOD_ACTIVITIES,
     ];
 
     // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that both in-flight

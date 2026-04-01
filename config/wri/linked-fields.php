@@ -1216,6 +1216,20 @@ return [
                     'input_type' => 'associates',
                     'collection' => 'all',
                 ],
+                'pro-rep-elp-beneficiaries' => [
+                    'property' => 'elpBeneficiaries',
+                    'label' => 'ELP Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
+                    'input_type' => 'elpBeneficiaries',
+                    'collection' => 'elp'
+                ],
+                'pro-rep-livelihood-activities' => [
+                    'property' => 'livelihoodActivities',
+                    'label' => 'Livelihood Activities',
+                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
+                    'input_type' => 'livelihoodActivities',
+                    'collection' => 'all'
+                ]
             ],
             'file-collections' => [
                 'pro-rep-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
