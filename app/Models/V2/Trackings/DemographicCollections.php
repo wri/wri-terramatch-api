@@ -62,4 +62,7 @@ class DemographicCollections
 
     // indirect-beneficiaries
     public const INDIRECT = 'indirect';
+
+    // elp-beneficiaries
+    public const ELP = 'elp';
 }

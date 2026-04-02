@@ -221,6 +221,7 @@ class ExportEntitiesAsProjectDeveloperControllerTest extends TestCase
 
         $uri = '/api/v2/projects/' . $project->uuid . '/export';
 
+        Redis::delete('exports:project:'.$project->id);
         $this->actingAs($owner)
             ->get($uri)
             ->assertJsonStructure([

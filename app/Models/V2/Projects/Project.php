@@ -154,7 +154,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'level_0_project',
         'level_1_project',
         'level_2_project',
-        'land_tenure_approach',
         'seedlings_procurement',
         'jobs_goal_description',
         'volunteers_goal_description',
@@ -164,6 +163,8 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'consortium',
         'landowner_agreement',
         'nursery_seedlings_goal',
+        'bioecology_product_list',
+        'bioecology_product_description',
     ];
 
     public $fileConfiguration = [
