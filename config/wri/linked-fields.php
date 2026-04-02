@@ -597,6 +597,7 @@ return [
                 'pro-pit-fcol-rest-photos' => ['property' => 'restoration_photos', 'label' => 'Past Restoration Photos', 'input_type' => 'file', 'multichoice' => true],
                 'pro-pit-fcol-detail-proj-bdgt' => ['property' => 'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
                 'pro-pit-proof-of-land-tenure-mou' => ['property' => 'proof_of_land_tenure_mou', 'label' => 'Proof of land tenure MOU', 'input_type' => 'file', 'multichoice' => true],
+                'pro-pit-consortium-partnership-agreements' => ['property' => 'consortium_partnership_agreements', 'label' => 'Consortium agreements', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'pro-pit-tree-species' => [
@@ -746,7 +747,6 @@ return [
                 'pro-level-0-project' => ['property' => 'level_0_project', 'label' => 'GADM level 0 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-0'],
                 'pro-level-1-project' => ['property' => 'level_1_project', 'label' => 'GADM level 1 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-1'],
                 'pro-level-2-project' => ['property' => 'level_2_project', 'label' => 'GADM level 2 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-2'],
-                'pro-land-tenure-approach' => ['property' => 'land_tenure_approach', 'label' => 'Land tenure approach', 'input_type' => 'long-text'],
                 'pro-seedlings-procurement' => ['property' => 'seedlings_procurement', 'label' => 'Seedlings procurement method', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'seedlings-procurement'],
                 'pro-jobs-goal-description' => ['property' => 'jobs_goal_description', 'label' => 'Jobs goal description', 'input_type' => 'long-text'],
                 'pro-volunteers-goal-description' => ['property' => 'volunteers_goal_description', 'label' => 'Volunteers goal description', 'input_type' => 'long-text'],
@@ -768,6 +768,7 @@ return [
                 // new collections
                 'pro-col-detailed-project-budget' => ['property' => 'detailed_project_budget', 'label' => 'Detailed project budget', 'input_type' => 'file', 'multichoice' => false],
                 'pro-col-proof-of-land-tenure-mou' => ['property' => 'proof_of_land_tenure_mou', 'label' => 'Documentation on project area’s land tenure', 'input_type' => 'file', 'multichoice' => true],
+                'pro-col-consortium-partnership-agreements' => ['property' => 'consortium_partnership_agreements', 'label' => 'Consortium agreements', 'input_type' => 'file', 'multichoice' => true],
             ],
             'relations' => [
                 'pro-pit-rel-tree-species' => [
@@ -776,6 +777,13 @@ return [
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
+                ],
+                'pro-rel-non-tree-species' => [
+                    'property' => 'nonTreeSpecies',
+                    'label' => 'Non-Tree Species',
+                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
+                    'input_type' => 'treeSpecies',
+                    'collection' => 'non-tree',
                 ],
                 'pro-all-jobs' => [
                     'property' => 'jobsAll',
@@ -1246,6 +1254,7 @@ return [
                 'site-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
                 'site-history' => ['property' => 'history', 'label' => 'History', 'input_type' => 'long-text'],
                 'site-land-tenures' => ['property' => 'land_tenures', 'label' => 'Land tenures', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'land-tenures'],
+                'site-land-tenure-approach' => ['property' => 'land_tenure_approach', 'label' => 'Land tenure approach', 'input_type' => 'long-text'],
                 'site-landscape-community-contribution' => ['property' => 'landscape_community_contribution', 'label' => 'Landscape community contribution', 'input_type' => 'long-text'],
                 'site-planting-pattern' => ['property' => 'planting_pattern', 'label' => 'Planting pattern', 'input_type' => 'long-text'],
                 'site-soil-condition' => ['property' => 'soil_condition', 'label' => 'Soil condition', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'soil-condition'],
@@ -1258,7 +1267,7 @@ return [
                 'site-aim-number-of-mature-trees' => ['property' => 'aim_number_of_mature_trees', 'label' => 'Aim number of mature trees', 'input_type' => 'number'],
                 'site-start-date' => ['property' => 'start_date', 'label' => 'Start date', 'input_type' => 'date'],
                 'site-end-date' => ['property' => 'end_date', 'label' => 'End date', 'input_type' => 'date'],
-                'site-description-siting-strategy' => ['property' => 'description_siting_strategy', 'label' => 'Description siting strategy', 'input_type' => 'text'],
+                'site-description-siting-strategy' => ['property' => 'description_siting_strategy', 'label' => 'Description siting strategy', 'input_type' => 'long-text'],
                 'site-col-siting-strategy' => ['property' => 'siting_strategy', 'label' => 'Siting Strategy', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'siting-strategies'],
                 'site-detailed-rst-inv-types' => ['property' => 'detailed_intervention_types', 'label' => 'Detailed intervention types', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'interventions'],
             ],
@@ -1381,6 +1390,13 @@ return [
                     'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
                     'input_type' => 'treeSpecies',
                     'collection' => 'tree-planted',
+                ],
+                'site-rep-rel-anr-tree-species' => [
+                    'property' => 'anrTreeSpecies',
+                    'label' => 'Regenerating Species',
+                    'resource' => 'App\Http\Resources\V2\TreeSpecies\TreeSpeciesResource',
+                    'input_type' => 'treeSpecies',
+                    'collection' => 'anr',
                 ],
                 'site-rep-rel-non-tree-species' => [
                     'property' => 'nonTreeSpecies',

@@ -40,10 +40,6 @@ V2OrganisationRead:
   $ref: './V2OrganisationRead.yml'
 ShapefileRead:
   $ref: './ShapefileRead.yml'
-V2AdminUserRead:
-  $ref: './V2AdminUserRead.yml'
-V2AdminUserUpdate:
-  $ref: './V2AdminUserUpdate.yml'
 V2FileRead:
   $ref: './V2FileRead.yml'
 V2FileGallery:

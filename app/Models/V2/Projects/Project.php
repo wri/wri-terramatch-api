@@ -154,7 +154,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'level_0_project',
         'level_1_project',
         'level_2_project',
-        'land_tenure_approach',
         'seedlings_procurement',
         'jobs_goal_description',
         'volunteers_goal_description',
@@ -200,6 +199,10 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
             'multiple' => false,
         ],
         'proof_of_land_tenure_mou' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ],
+        'consortium_partnership_agreements' => [
             'validation' => 'general-documents',
             'multiple' => true,
         ],
