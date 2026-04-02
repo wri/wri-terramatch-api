@@ -154,7 +154,6 @@ class Project extends Model implements MediaModel, AuditableContract, EntityMode
         'level_0_project',
         'level_1_project',
         'level_2_project',
-        'land_tenure_approach',
         'seedlings_procurement',
         'jobs_goal_description',
         'volunteers_goal_description',
