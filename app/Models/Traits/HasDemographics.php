@@ -80,6 +80,8 @@ trait HasDemographics
                 Tracking::ALL_BENEFICIARIES_TYPE,
                 Tracking::TRAINING_BENEFICIARIES_TYPE,
                 Tracking::INDIRECT_BENEFICIARIES_TYPE,
+                Tracking::ELP_BENEFICIARIES_TYPE,
+                Tracking::LIVELIHOOD_ACTIVITIES,
                 Tracking::ASSOCIATES_TYPE => null,
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };
