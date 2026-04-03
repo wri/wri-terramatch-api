@@ -14,6 +14,5 @@ class UserVerification extends I18nMail
         $this->link = $callbackUrl ?
             $callbackUrl . urlencode($token) :
             '/verify?token=' . urlencode($token);
-        $this->transactional = true;
     }
 }

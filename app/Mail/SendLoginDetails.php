@@ -19,7 +19,5 @@ class SendLoginDetails extends I18nMail
         $this->link = $callbackUrl ?
             $callbackUrl . urlencode($token) :
             '/set-password?token=' . urlencode($token);
-
-        $this->transactional = true;
     }
 }

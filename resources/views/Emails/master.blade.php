@@ -145,17 +145,10 @@
                                                 and is not a marketing or promotional email. You are therefore unable to unsubscribe.
                                                 <br><br>
                                             @else
-                                                @if ($transactional)
-                                                    You are receiving this email because you have an account with TerraMatch.
-                                                    This is a required email and is not a marketing or promotional email.
-                                                    You are therefore unable to unsubscribe.
-                                                    <br><br>
-                                                @else
-                                                    You are receiving this email because you have an account with TerraMatch.
-                                                    This is not a required email.
-                                                    <a href="{!! $backend_url !!}{!! $unsubscribe !!}" style="color: #6E6E6E;">Click here</a> to unsubscribe.
-                                                    <br><br>
-                                                @endif
+                                                You are receiving this email because you have an account with TerraMatch.
+                                                This is a required email and is not a marketing or promotional email.
+                                                You are therefore unable to unsubscribe.
+                                                <br><br>
                                             @endif
                                             If you have any questions, feel free to message us at <a href="mailto:TerraMatch@wri.org" style="color: #6E6E6E;">TerraMatch@wri.org</a>.
                                             <br><br>

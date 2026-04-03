@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\DefaultController;
 use App\Http\Controllers\DocumentationVersionedController;
-use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,5 +26,3 @@ Route::get('/documentation/{version}/{ui}', [DocumentationVersionedController::c
 
 Route::get('/documentation/{version}/raw', [DocumentationVersionedController::class, 'readAsYamlAction'])
     ->where('version', 'v2');
-
-Route::get('/users/{encrypted_id}/unsubscribe', [UsersController::class, 'unsubscribeAction']);

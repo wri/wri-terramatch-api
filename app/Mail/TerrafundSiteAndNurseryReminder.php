@@ -13,7 +13,5 @@ class TerrafundSiteAndNurseryReminder extends I18nMail
             ->setCta('terrafund-site-and-nursery-reminder.cta');
 
         $this->link = '/terrafund/programmeOverview/' . $id;
-
-        $this->transactional = true;
     }
 }

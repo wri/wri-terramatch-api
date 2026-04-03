@@ -24,7 +24,5 @@ class BulkUserCreation extends I18nMail
             $frontEndUrl .= '/';
         }
         $this->link = $frontEndUrl . 'auth/set-password/' . urlencode($token);
-
-        $this->transactional = true;
     }
 }

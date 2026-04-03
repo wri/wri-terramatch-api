@@ -34,7 +34,5 @@ class PolygonOperationsComplete extends I18nMail
         } else {
             $this->link = '/admin#/site/' . $site->uuid . '/show';
         }
-
-        $this->transactional = true;
     }
 }
