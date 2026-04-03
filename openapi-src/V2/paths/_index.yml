@@ -1,43 +1,3 @@
-/v2/{entity}/{UUID}/aggregate-reports:
-  get:
-    $ref: './TreeSpecies/get-v2-entity-uuid-aggregate-reports.yml'
-/v2/admin/projects/multi:
-  get:
-    $ref: './Projects/get-v2-admin-projects-multi.yml'
-/v2/admin/nurseries/multi:
-  get:
-    $ref: './Nurseries/get-v2-admin-nurseries-multi.yml'
-/v2/admin/sites/multi:
-  get:
-    $ref: './Sites/get-v2-admin-sites-multi.yml'
-/users:
-  post:
-    $ref: './Users/post-users.yml'
-/v2/projects/{UUID}/partners:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-partners.yml'
-/v2/projects/{UUID}/{EMAIL}/remove-partner:
-  delete:
-    $ref: './Projects/delete-v2-projects-uuid-partners.yml'
-/v2/my/actions/{UUID}/complete:
-  put:
-    $ref: './Users/put-v2-my-action-uuid-complete.yml'
-/v2/admin/reporting-frameworks:
-  get:
-    $ref: './ReportingFrameworks/get-v2-admin-reporting-frameworks.yml'
-  post:
-    $ref: './ReportingFrameworks/post-v2-admin-reporting-frameworks.yml'
-/v2/admin/reporting-frameworks/{UUID}:
-  put:
-    $ref: './ReportingFrameworks/put-v2-admin-reporting-frameworks-uuid.yml'
-  delete:
-    $ref: './ReportingFrameworks/delete-v2-admin-reporting-frameworks-uuid.yml'
-/v2/reporting-frameworks/access-code/{ACCESS_CODE}:
-  get:
-    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-access-code.yml'
-/v2/reporting-frameworks/{frameworkKey}:
-  get:
-    $ref: './ReportingFrameworks/get-v2-reporting-frameworks-framework-key.yml'
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
@@ -54,60 +14,6 @@
         description: OK
         schema:
           type: file
-/v2/{MODEL}/{UUID}/image/locations:
-  get:
-    $ref: './Files/get-v2-model-uuid-image-locations.yml'
-/v2/funding-type:
-  post:
-    summary: Create a funding type entry
-    operationId: post-v2-funding-type
-    responses:
-      '201':
-        description: Created
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeCreate'
-    tags:
-      - V2 Funding Type
-'/v2/funding-type/{UUID}':
-  patch:
-    summary: Update a funding type
-    operationId: patch-v2-funding-type-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
-    tags:
-      - V2 Funding Type
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeUpdate'
-  delete:
-    summary: Delete a funding type entry
-    operationId: delete-v2-funding-type-UUID
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2FundingTypeRead'
-    tags:
-      - V2 Funding Type
 /v2/leaderships:
   post:
     summary: Create a leaderships
@@ -210,17 +116,6 @@
           $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
     tags:
       - V2 Ownership Stake
-/v2/admin/project-pitches/export:
-  get:
-    summary: Export project pitches as an admin
-    tags:
-      - Project Pitches
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-    operationId: get-v2-project-pitches-export
 '/v2/admin/forms/submissions/{UUID}/export':
   get:
     summary: Export form submissions
@@ -237,27 +132,6 @@
         schema:
           type: object
     operationId: get-v2-admin-forms-submissions-uuid-export
-/v2/my/banners:
-  patch:
-    summary: Update the authenticated user's banners
-    operationId: patch-v2-my-banners
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/UserRead'
-    parameters:
-      - in: body
-        name: body
-        schema:
-          type: object
-          properties:
-            banners:
-              type: array
-              items:
-                type: object
-    tags:
-      - V2 Users
 '/v2/admin/forms/applications/{UUID}/export':
   get:
     summary: Export CSV document of applications belonging to a funding programme
@@ -297,34 +171,6 @@
         description: OK
         schema:
           type: file
-'/v2/admin/site-monitorings':
-  post:
-    $ref: './Sites/Monitoring/post-v2-admin-site-monitorings.yml'
-'/v2/admin/site-monitorings/{UUID}':
-  put:
-    $ref: './Sites/Monitoring/put-v2-admin-site-monitorings-uuid.yml'
-  delete:
-    $ref: './Sites/Monitoring/delete-v2-admin-site-monitorings-uuid.yml'
-'/v2/admin/project-monitorings':
-  post:
-    $ref: './Projects/Monitoring/post-v2-admin-project-monitorings.yml'
-'/v2/admin/project-monitorings/{UUID}':
-  put:
-    $ref: './Projects/Monitoring/put-v2-admin-project-monitorings-uuid.yml'
-  delete:
-    $ref: './Projects/Monitoring/delete-v2-admin-project-monitorings-uuid.yml'
-/auth/logout:
-  get:
-    $ref: './Auth/get-user-logout.yml'
-/auth/me:
-  get:
-    $ref: './Auth/get-logged-user-details.yml'
-/auth/login:
-  post:
-    $ref: './Auth/post-auth-login.yml'
-/auth/change:
-  patch:
-    $ref: './Auth/patch-auth-change.yml'
 /v2/auth/complete/signup:
   put:
     $ref: './Auth/put-auth-complete-signup.yml'
@@ -340,50 +186,12 @@
 /auth/store:
   post:
     $ref: './Auth/post-auth-store.yml'
-/v2/auth/verify:
-  patch:
-    $ref: './Auth/patch-v2-auth-verify.yml'
-/auth/verify:
-  patch:
-    $ref: './Auth/patch-auth-verify.yml'
 /v2/users/resend:
   post:
     $ref: './Auth/post-v2-users-resend.yml'
-/v2/sites/{UUID}:
-  get:
-    $ref: './Sites/get-v2-sites-uuid.yml'
-/v2/sites/{UUID}/polygons:
-  get:
-    $ref: './Sites/get-v2-admin-sites-uuid-polygons.yml'
-/v2/sites/{UUID}/polygons/count:
-  get:
-    $ref: './Sites/get-v2-admin-sites-uuid-polygons-count.yml'
-/v2/site-monitorings/{UUID}:
-  get:
-    $ref: './Sites/Monitoring/get-v2-site-monitorings-uuid.yml'
-/v2/sites/{UUID}/monitorings:
-  get:
-    $ref: './Sites/get-v2-sites-uuid-monitorings.yml'
-/v2/projects/{UUID}/monitorings:
-  get:
-    $ref: './Projects/get-v2-projects-uuid-monitorings.yml'
-/v2/projects/{UUID}/invite:
-  post:
-    $ref: './Projects/post-v2-projects-uuid-invite.yml'
-/v2/projects/{UUID}/managers:
-  post:
-    $ref: './Projects/post-v2-projects-managers-store.yml'
-  get:
-    $ref: './Projects/get-v2-projects-managers.yml'
-/v2/projects/{UUID}/managers/{USER_UUID}:
-  delete:
-    $ref: './Projects/delete-v2-projects-uuid-managers.yml'
 /v2/export-image:
   post:
     $ref: './Exports/post-v2-export-image.yml'
-/v2/admin/{ENTITY}/export/{FRAMEWORK}:
-  get:
-    $ref: './Exports/get-v2-admin-entity-export-framework.yml'
 /v2/admin/{ENTITY}/export/{FRAMEWORK}/pm:
   get:
     $ref: './Exports/get-v2-admin-entity-export-framework-pm.yml'
@@ -396,77 +204,6 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
-/v2/terrafund/site-polygon/{uuid}/{siteUuid}:
-  post:
-    $ref: './Terrafund/post-v2-site-polygon-data.yml'
-/v2/terrafund/geojson/complete:
-  get:
-    $ref: './Terrafund/get-v2-geojson-complete-download.yml'
-/v2/terrafund/polygon/{uuid}:
-  get:
-    $ref: './Terrafund/get-api-v2-terrafund-polygon-uuid.yml'
-  put:
-    $ref: './Terrafund/put-v2-terrafund-polygon-uuid.yml'
-/v2/terrafund/geojson/site:
-  get:
-    $ref: './Terrafund/get-v2-geojson-site.yml'
-/v2/terrafund/polygon:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-polygon.yml'
-/v2/terrafund/upload-geojson-project:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-geojson-project.yml'
-/v2/terrafund/upload-shapefile-project:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-shapefile-project.yml'
-/v2/terrafund/upload-kml-project:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-upload-kml-project.yml'
-/v2/terrafund/site-polygon/{uuid}:
-  put:
-    $ref: './Terrafund/put-v2-terrafund-site-polygon-uuid.yml'
-/v2/terrafund/new-site-polygon/{uuid}/new-version:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-site-polygon-uuid-version.yml'
-/v2/terrafund/project-polygon:
-  get:
-    $ref: './Terrafund/get-v2-terrafund-project-polygon.yml'
-/v2/terrafund/project-polygon/{uuid}:
-  delete:
-    $ref: './Terrafund/delete-v2-terrafund-project-polygon-uuid.yml'
-/v2/terrafund/project-polygon/{uuid}/{entity_uuid}/{entity_type}:
-  post:
-    $ref: './Terrafund/post-v2-terrafund-project-polygon.yml'
-/v2/dashboard/polygon-data/{uuid}:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-polygon-data-uuid.yml'
-/v2/project-pipeline:
-  get:
-    $ref: './ProjectPipeline/get-v2-project-pipeline.yml'
-  post:
-    $ref: './ProjectPipeline/post-v2-project-pipeline.yml'
-/v2/project-pipeline/{id}:
-  get:
-    $ref: './ProjectPipeline/get-v2-project-pipeline-id.yml'
-  put:
-    $ref: './ProjectPipeline/put-v2-project-pipeline-id.yml'
-  delete:
-    $ref: './ProjectPipeline/delete-v2-project-pipeline-id.yml'
-/v2/dashboard/view-project/{uuid}:
-  get:
-    $ref: './Dashboard/get-v2-dashboard-view-project-uuid.yml'
-/v2/terrafund/polygon/geojson/{uuid}:
-  get:
-    $ref: './Terrafund/get-v2-terrafund-polygon-geojson-uuid.yml'
-/v2/{ENTITY}/{UUID}/status:
-  put:
-    $ref: './Entity/put-v2-entity-uuid-status.yml'
-/v2/{ENTITY}/{UUID}/{ID}/delete:
-  delete:
-    $ref: './AuditStatus/delete-v2-audit-status.yml'
-/v2/indicators/{entity}/{uuid}/{slug}/export:
-  get:
-    $ref: './MonitoredData/get-v2-indicators-entity-slug-export.yml'
 /v2/financial-indicators:
   patch:
     summary: Update a financial indicators
@@ -485,7 +222,7 @@
           $ref: '../definitions/_index.yml#/V2FinancialIndicatorsUpdate'
 /v2/financial-reports/export:
   get:
-    summary: Export financia reports
+    summary: Export financial reports
     tags:
       - V2 financial reports
     responses:

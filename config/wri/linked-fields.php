@@ -747,7 +747,6 @@ return [
                 'pro-level-0-project' => ['property' => 'level_0_project', 'label' => 'GADM level 0 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-0'],
                 'pro-level-1-project' => ['property' => 'level_1_project', 'label' => 'GADM level 1 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-1'],
                 'pro-level-2-project' => ['property' => 'level_2_project', 'label' => 'GADM level 2 administrative areas where project is restoring land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-2'],
-                'pro-land-tenure-approach' => ['property' => 'land_tenure_approach', 'label' => 'Land tenure approach', 'input_type' => 'long-text'],
                 'pro-seedlings-procurement' => ['property' => 'seedlings_procurement', 'label' => 'Seedlings procurement method', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'seedlings-procurement'],
                 'pro-jobs-goal-description' => ['property' => 'jobs_goal_description', 'label' => 'Jobs goal description', 'input_type' => 'long-text'],
                 'pro-volunteers-goal-description' => ['property' => 'volunteers_goal_description', 'label' => 'Volunteers goal description', 'input_type' => 'long-text'],
@@ -757,6 +756,8 @@ return [
                 'pro-consortium' => ['property' => 'consortium', 'label' => 'Consortium information', 'input_type' => 'long-text'],
                 'pro-landowner-agreement' => ['property' => 'landowner_agreement', 'label' => 'Prior agreement with landowner', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'landowner-collection'],
                 'pro-nursery-seedlings-goal' => ['property' => 'nursery_seedlings_goal', 'label' => 'Nursery seedlings goal', 'input_type' => 'number'],
+                'pro-bioeconomy-product-list' => ['property' => 'bioeconomy_product_list', 'label' => 'Bioeconomy product list', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'bioeconomy-product-list'],
+                'pro-bioeconomy-product-description' => ['property' => 'bioeconomy_product_description', 'label' => 'Bioeconomy product description', 'input_type' => 'long-text'],
             ],
             'file-collections' => [
                 'pro-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
@@ -946,7 +947,8 @@ return [
                 'pro-rep-beneficiaries-training-other' => ['property' => 'beneficiaries_training_other', 'label' => 'Other Gender Trained', 'input_type' => 'number'],
                 'pro-rep-beneficiaries-training-youth' => ['property' => 'beneficiaries_training_youth', 'label' => 'Youth Trained', 'input_type' => 'number'],
                 'pro-rep-beneficiaries-training-non-youth' => ['property' => 'beneficiaries_training_non_youth', 'label' => 'Non Youth Trained', 'input_type' => 'number'],
-                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'Planting status','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'], 
+                'pro-rep-planting-status' => ['property' => 'planting_status','label' => 'Planting status','input_type' => 'select','multichoice' => false,'option_list_key' => 'planting-status'],
+                'pro-rep-elp-description' => ['property' => 'elp_description', 'label' => 'ELP description','input_type' => 'long-text'],
             ],
             'relations' => [
                 'pro-rep-rel-tree-species' => [
@@ -1214,6 +1216,20 @@ return [
                     'input_type' => 'associates',
                     'collection' => 'all',
                 ],
+                'pro-rep-elp-beneficiaries' => [
+                    'property' => 'elpBeneficiaries',
+                    'label' => 'ELP Beneficiaries',
+                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
+                    'input_type' => 'elpBeneficiaries',
+                    'collection' => 'elp'
+                ],
+                'pro-rep-livelihood-activities' => [
+                    'property' => 'livelihoodActivities',
+                    'label' => 'Livelihood Activities',
+                    'resource' => 'App\Http\Resources\V2\Trackings\TrackingResource',
+                    'input_type' => 'livelihoodActivities',
+                    'collection' => 'all'
+                ]
             ],
             'file-collections' => [
                 'pro-rep-col-media' => ['property' => 'media', 'label' => 'Media', 'input_type' => 'file', 'multichoice' => true],
@@ -1255,6 +1271,7 @@ return [
                 'site-description' => ['property' => 'description', 'label' => 'Description', 'input_type' => 'long-text'],
                 'site-history' => ['property' => 'history', 'label' => 'History', 'input_type' => 'long-text'],
                 'site-land-tenures' => ['property' => 'land_tenures', 'label' => 'Land tenures', 'input_type' => 'select-image', 'multichoice' => true, 'option_list_key' => 'land-tenures'],
+                'site-land-tenure-approach' => ['property' => 'land_tenure_approach', 'label' => 'Land tenure approach', 'input_type' => 'long-text'],
                 'site-landscape-community-contribution' => ['property' => 'landscape_community_contribution', 'label' => 'Landscape community contribution', 'input_type' => 'long-text'],
                 'site-planting-pattern' => ['property' => 'planting_pattern', 'label' => 'Planting pattern', 'input_type' => 'long-text'],
                 'site-soil-condition' => ['property' => 'soil_condition', 'label' => 'Soil condition', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'soil-condition'],
@@ -1267,7 +1284,7 @@ return [
                 'site-aim-number-of-mature-trees' => ['property' => 'aim_number_of_mature_trees', 'label' => 'Aim number of mature trees', 'input_type' => 'number'],
                 'site-start-date' => ['property' => 'start_date', 'label' => 'Start date', 'input_type' => 'date'],
                 'site-end-date' => ['property' => 'end_date', 'label' => 'End date', 'input_type' => 'date'],
-                'site-description-siting-strategy' => ['property' => 'description_siting_strategy', 'label' => 'Description siting strategy', 'input_type' => 'text'],
+                'site-description-siting-strategy' => ['property' => 'description_siting_strategy', 'label' => 'Description siting strategy', 'input_type' => 'long-text'],
                 'site-col-siting-strategy' => ['property' => 'siting_strategy', 'label' => 'Siting Strategy', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'siting-strategies'],
                 'site-detailed-rst-inv-types' => ['property' => 'detailed_intervention_types', 'label' => 'Detailed intervention types', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'interventions'],
             ],

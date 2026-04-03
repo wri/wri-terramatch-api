@@ -4,40 +4,19 @@ namespace App\Providers;
 
 use App\Events\V2\General\EntityDeleteEvent;
 use App\Events\V2\General\EntityStatusChangeEvent;
-use App\Events\V2\Organisation\OrganisationApprovedEvent;
-use App\Events\V2\Organisation\OrganisationRejectedEvent;
-use App\Events\V2\Organisation\OrganisationUserJoinRequestEvent;
-use App\Events\V2\Organisation\OrganisationUserRequestApprovedEvent;
-use App\Events\V2\Organisation\OrganisationUserRequestRejectedEvent;
-use App\Listeners\v2\Files\CatchMediaConversionCompletionListener;
-use App\Listeners\v2\Files\CatchMediaConversionStartListener;
 use App\Listeners\v2\General\DeleteAction;
 use App\Listeners\v2\General\StatusChangeAction;
-use App\Listeners\v2\Organisation\OrganisationApprovedSendEmail;
-use App\Listeners\v2\Organisation\OrganisationRejectedSendEmail;
-use App\Listeners\v2\Organisation\OrganisationUserApprovedSendEmail;
-use App\Listeners\v2\Organisation\OrganisationUserJoinRequestNotification;
-use App\Listeners\v2\Organisation\OrganisationUserJoinRequestSendEmail;
-use App\Listeners\v2\Organisation\OrganisationUserRejectedSendEmail;
-use App\Models\Terrafund\TerrafundNurserySubmission;
-use App\Models\Terrafund\TerrafundProgrammeSubmission;
-use App\Models\Terrafund\TerrafundSiteSubmission;
 use App\Models\V2\Forms\Form;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\Nurseries\Nursery;
 use App\Models\V2\Projects\Project;
 use App\Models\V2\Sites\Site;
-use App\Observers\Terrafund\TerrafundNurserySubmissionObserver;
-use App\Observers\Terrafund\TerrafundProgrammeSubmissionObserver;
-use App\Observers\Terrafund\TerrafundSiteSubmissionObserver;
 use App\Observers\V2\FormObserver;
 use App\Observers\V2\FormSubmissionObserver;
 use App\Observers\V2\NurseryObserver;
 use App\Observers\V2\ProjectObserver;
 use App\Observers\V2\SiteObserver;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Spatie\MediaLibrary\Conversions\Events\ConversionHasBeenCompleted;
-use Spatie\MediaLibrary\Conversions\Events\ConversionWillStart;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -49,19 +28,6 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         EntityStatusChangeEvent::class => [StatusChangeAction::class],
         EntityDeleteEvent::class => [DeleteAction::class],
-
-        OrganisationApprovedEvent::class => [OrganisationApprovedSendEmail::class],
-        OrganisationRejectedEvent::class => [OrganisationRejectedSendEmail::class],
-
-        OrganisationUserJoinRequestEvent::class => [
-            OrganisationUserJoinRequestNotification::class,
-            OrganisationUserJoinRequestSendEmail::class,
-        ],
-        OrganisationUserRequestApprovedEvent::class => [OrganisationUserApprovedSendEmail::class],
-        OrganisationUserRequestRejectedEvent::class => [OrganisationUserRejectedSendEmail::class],
-
-        ConversionWillStart::class => [CatchMediaConversionStartListener::class],
-        ConversionHasBeenCompleted::class => [CatchMediaConversionCompletionListener::class],
     ];
 
     /**
@@ -70,10 +36,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-        TerrafundProgrammeSubmission::observe(TerrafundProgrammeSubmissionObserver::class);
-        TerrafundNurserySubmission::observe(TerrafundNurserySubmissionObserver::class);
-        TerrafundSiteSubmission::observe(TerrafundSiteSubmissionObserver::class);
-
         FormSubmission::observe(FormSubmissionObserver::class);
         Form::observe(FormObserver::class);
 
