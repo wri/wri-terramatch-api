@@ -106,7 +106,6 @@ return [
                 'org-environmental-impact' => ['property' => 'environmental_impact', 'label' => 'Environmental Impact', 'input_type' => 'long-text'],
                 'org-socioeconomic-impact' => ['property' => 'socioeconomic_impact', 'label' => 'Socioeconomic Impact', 'input_type' => 'long-text'],
                 'org-growith-stage' => ['property' => 'growith_stage', 'label' => 'Stage of Growth', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'growith-stage'],
-                'org-consortium' => ['property' => 'consortium', 'label' => 'Organizations involved in consortium and description', 'input_type' => 'long-text'],
                 'org-female-youth-leadership-example' => ['property' => 'female_youth_leadership_example', 'label' => 'Female or youth contribution to project leadership or decision making example', 'input_type' => 'long-text'],
                 'org-level-0-past-restoration' => ['property' => 'level_0_past_restoration', 'label' => 'countries where organisation has previously restored land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-0'],
                 'org-level-1-past-restoration' => ['property' => 'level_1_past_restoration', 'label' => 'GADM level 1 administrative areas where organisation has previously restored land', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'gadm-level-1'],
