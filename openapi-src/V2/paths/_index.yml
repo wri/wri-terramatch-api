@@ -1,19 +1,6 @@
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
-/v2/admin/organisations/export:
-  get:
-    summary: Export CSV document of all time organaisations
-    tags:
-      - V2 Admin
-      - Export
-    produces:
-      - text/plain
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: file
 /v2/leaderships:
   post:
     summary: Create a leaderships

@@ -19,7 +19,6 @@ use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
-use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
@@ -41,8 +40,6 @@ use Illuminate\Support\Facades\Route;
 
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
-    Route::get('organisations/export', AdminExportOrganisationsController::class);
-
     Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
     Route::get('/{entity}/export/{framework}/pm', ProjectAdminExportController::class);
 

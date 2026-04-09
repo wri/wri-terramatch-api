@@ -2497,19 +2497,6 @@ paths:
       responses:
         '200':
           description: OK
-  /v2/admin/organisations/export:
-    get:
-      summary: Export CSV document of all time organaisations
-      tags:
-        - V2 Admin
-        - Export
-      produces:
-        - text/plain
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: file
   /v2/leaderships:
     post:
       summary: Create a leaderships
