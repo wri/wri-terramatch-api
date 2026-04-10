@@ -40,6 +40,7 @@ trait HasDemographics
         'allBeneficiariesAggregate' => ['type' => Tracking::ALL_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::ALL],
         'indirectBeneficiariesAggregate' => ['type' => Tracking::INDIRECT_BENEFICIARIES_TYPE, 'collection' => DemographicCollections::INDIRECT],
         'allAssociatesAggregate' => ['type' => Tracking::ASSOCIATES_TYPE, 'collection' => DemographicCollections::ALL],
+        'allEmployeesAggregate' => ['type' => Tracking::EMPLOYEES_TYPE, 'collection' => DemographicCollections::ALL],
     ];
 
     public static function bootHasDemographics()
@@ -80,6 +81,8 @@ trait HasDemographics
                 Tracking::ALL_BENEFICIARIES_TYPE,
                 Tracking::TRAINING_BENEFICIARIES_TYPE,
                 Tracking::INDIRECT_BENEFICIARIES_TYPE,
+                Tracking::ELP_BENEFICIARIES_TYPE,
+                Tracking::LIVELIHOOD_ACTIVITIES,
                 Tracking::ASSOCIATES_TYPE => null,
                 default => throw new InternalErrorException("Unrecognized demographic type: $demographicType"),
             };
