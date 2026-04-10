@@ -28,12 +28,6 @@ V2LeadershipsUpdate:
   $ref: './V2LeadershipsUpdate.yml'
 V2LeadershipsRead:
   $ref: './V2LeadershipsRead.yml'
-V2OwnershipStakeCreate:
-  $ref: './V2OwnershipStakeCreate.yml'
-V2OwnershipStakeRead:
-  $ref: './V2OwnershipStakeRead.yml'
-V2OwnershipStakeUpdate:
-  $ref: './V2OwnershipStakeUpdate.yml'
 V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
 Empty:
