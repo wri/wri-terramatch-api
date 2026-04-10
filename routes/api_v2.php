@@ -16,9 +16,6 @@ use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
-use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
-use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
-use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
@@ -55,12 +52,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 /** NON ADMIN ROUTES */
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
-
-Route::prefix('leaderships')->group(function () {
-    Route::post('/', StoreLeadershipsController::class);
-    Route::delete('/{leaderships}', DeleteLeadershipsController::class);
-    Route::patch('/{leaderships}', UpdateLeadershipsController::class);
-});
 
 Route::patch('financial-indicators', UpsertFinancialIndicatorsController::class);
 
