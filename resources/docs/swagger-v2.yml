@@ -2344,33 +2344,6 @@ definitions:
         type: string
       role:
         type: string
-  V2FinancialIndicatorsRead:
-    title: V2FinancialIndicatorsRead
-    type: array
-    items:
-      type: object
-  V2FinancialIndicatorsUpdate:
-    title: V2FinancialIndicatorsUpdate
-    type: object
-    properties:
-      organisation_id:
-        type: string
-      profit_analysis_data:
-        type: array
-        items:
-          type: object
-      current_radio_data:
-        type: array
-        items:
-          type: object
-      documentation_data:
-        type: array
-        items:
-          type: object
-      local_currency:
-        type: string
-      financial_year_start_month:
-        type: integer
 paths:
   '/v2/admin/{ENTITY}/{UUID}/reminder':
     post:
@@ -2814,45 +2787,6 @@ paths:
           description: OK
           schema:
             type: file
-  /v2/financial-indicators:
-    patch:
-      summary: Update a financial indicators
-      operationId: patch-v2-financial-indicators-UUID
-      responses:
-        '200':
-          description: OK
-          schema:
-            title: V2FinancialIndicatorsRead
-            type: array
-            items:
-              type: object
-      tags:
-        - V2 financial Indicators
-      parameters:
-        - in: body
-          name: body
-          schema:
-            title: V2FinancialIndicatorsUpdate
-            type: object
-            properties:
-              organisation_id:
-                type: string
-              profit_analysis_data:
-                type: array
-                items:
-                  type: object
-              current_radio_data:
-                type: array
-                items:
-                  type: object
-              documentation_data:
-                type: array
-                items:
-                  type: object
-              local_currency:
-                type: string
-              financial_year_start_month:
-                type: integer
   /v2/financial-reports/export:
     get:
       summary: Export financial reports

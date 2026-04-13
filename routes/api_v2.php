@@ -13,7 +13,6 @@ use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperControl
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
-use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
@@ -52,8 +51,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 /** NON ADMIN ROUTES */
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
-
-Route::patch('financial-indicators', UpsertFinancialIndicatorsController::class);
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);

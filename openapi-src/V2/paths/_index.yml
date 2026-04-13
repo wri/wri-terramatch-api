@@ -102,22 +102,6 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
-/v2/financial-indicators:
-  patch:
-    summary: Update a financial indicators
-    operationId: patch-v2-financial-indicators-UUID
-    responses:
-      '200':
-        description: OK
-        schema:
-          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsRead'
-    tags:
-      - V2 financial Indicators
-    parameters:
-      - in: body
-        name: body
-        schema:
-          $ref: '../definitions/_index.yml#/V2FinancialIndicatorsUpdate'
 /v2/financial-reports/export:
   get:
     summary: Export financial reports

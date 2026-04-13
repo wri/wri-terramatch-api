@@ -40,7 +40,3 @@ SitePolygon:
   $ref: './SitePolygon.yml'
 UserCreateComplete:
   $ref: './UserCreateComplete.yml'
-V2FinancialIndicatorsRead:
-  $ref: './V2FinancialIndicatorsRead.yml'
-V2FinancialIndicatorsUpdate:
-  $ref: './V2FinancialIndicatorsUpdate.yml'
