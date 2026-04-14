@@ -132,6 +132,8 @@ return [
                 'org-bioeconomy-buyers' => ['property' => 'bioeconomy_buyers', 'label' => 'Buyers of the bioeconomy products', 'input_type' => 'text'],
                 'org-bioeconomy-product-list' => ['property' => 'bioeconomy_product_list', 'label' => 'Bioeconomy product list', 'input_type' => 'select', 'multichoice' => true, 'option_list_key' => 'bioeconomy-product-list'],
                 'org-bioeconomy-description' => ['property' => 'bioeconomy_description', 'label' => 'Bioeconomy description', 'input_type' => 'long-text'],
+                'org-aggregate-employees' => ['property' => 'all_employees_aggregate', 'label' => 'Aggregate employees', 'input_type' => 'number'],
+                'pro-aggregate-associates' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
             ],
             'file-collections' => [
                 'org-fcol-cover' => ['property' => 'cover', 'label' => 'Cover image', 'input_type' => 'file', 'multichoice' => false],
