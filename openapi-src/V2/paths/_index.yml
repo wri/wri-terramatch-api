@@ -103,22 +103,6 @@
           $ref: '../definitions/_index.yml#/V2OwnershipStakeRead'
     tags:
       - V2 Ownership Stake
-'/v2/admin/forms/submissions/{UUID}/export':
-  get:
-    summary: Export form submissions
-    tags:
-      - Form Submissions
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-    operationId: get-v2-admin-forms-submissions-uuid-export
 '/v2/admin/forms/applications/{UUID}/export':
   get:
     summary: Export CSV document of applications belonging to a funding programme

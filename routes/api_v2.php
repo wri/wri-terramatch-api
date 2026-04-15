@@ -15,7 +15,6 @@ use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController
 use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
-use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
@@ -48,7 +47,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
     });
 
     Route::prefix('forms')->group(function () {
-        Route::get('submissions/{form}/export', ExportFormSubmissionController::class);
         Route::get('applications/{fundingProgramme}/export', AdminExportApplicationController::class);
     });
 });
