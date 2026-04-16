@@ -20,7 +20,6 @@ use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
 use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
-use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
 use Illuminate\Support\Facades\Route;
@@ -74,7 +73,6 @@ Route::prefix('projects')->group(function () {
 
 Route::get('applications/{application}/export', ExportApplicationController::class);
 Route::get('disturbance-reports/export', ExportDisturbanceReportController::class);
-Route::get('srp-reports/export', ExportSrpReportController::class);
 Route::get('sites/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
 Route::get('nurseries/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
