@@ -3170,17 +3170,6 @@ paths:
                 type: string
               financial_year_start_month:
                 type: integer
-  /v2/financial-reports/export:
-    get:
-      summary: Export financial reports
-      tags:
-        - V2 financial reports
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-      operationId: get-v2-financial-reports-export
   /v2/disturbance-reports/export:
     get:
       summary: Export disturbance reports

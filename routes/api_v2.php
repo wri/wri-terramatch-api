@@ -14,7 +14,6 @@ use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperControll
 use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
 use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
-use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
 use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
@@ -74,7 +73,6 @@ Route::prefix('projects')->group(function () {
 });
 
 Route::get('applications/{application}/export', ExportApplicationController::class);
-Route::get('financial-reports/export', ExportFinancialReportController::class);
 Route::get('disturbance-reports/export', ExportDisturbanceReportController::class);
 Route::get('srp-reports/export', ExportSrpReportController::class);
 Route::get('sites/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
