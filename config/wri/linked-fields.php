@@ -283,7 +283,10 @@ return [
         'financial-report' => [
             'label' => 'Financial Report',
             'model' => App\Models\V2\FinancialReport::class,
-            'fields' => [],
+            'fields' => [
+                'fin-rep-currency' => ['property' => 'currency', 'label' => 'Local Currency', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'currencies'],
+                'fin-rep-fin-start-month' => ['property' => 'fin_start_month', 'label' => 'Financial Start Month', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'months'],
+            ],
             'relations' => [
                 'fin-rep-financial-indicators-financial-collection' => [
                     'property' => 'financialCollection',
