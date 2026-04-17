@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Console\Commands\Traits\Abortable;
 use App\Console\Commands\Traits\AbortException;
-use App\Models\Submission;
 use App\Models\V2\Forms\Application;
 use App\Models\V2\Forms\FormSubmission;
 use App\Models\V2\FundingProgramme;

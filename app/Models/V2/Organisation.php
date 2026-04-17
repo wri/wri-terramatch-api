@@ -187,6 +187,10 @@ class Organisation extends Model implements MediaModel
             'validation' => 'general-documents',
             'multiple' => true,
         ],
+        'additional_financial_documentation' => [
+            'validation' => 'general-documents',
+            'multiple' => true,
+        ]
     ];
 
     public $casts = [
@@ -220,7 +224,6 @@ class Organisation extends Model implements MediaModel
         'socioeconomic_impact' => 'string',
         'growith_stage' => 'string',
         'additional_comments' => 'string',
-        'consortium' => 'string',
         'female_youth_leadership_example' => 'string',
         'level_0_past_restoration' => 'array',
         'level_1_past_restoration' => 'array',

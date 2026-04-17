@@ -22,7 +22,6 @@ class V2OrganisationInviteReceived extends I18nMail
                 '{organisationName}' => $nameOrganisation,
             ]);
         $this->link = $callbackUrl . '/' . $tokenToCompleteCreateUser->token;
-        $this->transactional = true;
         $this->invite = true;
     }
 }

@@ -27,7 +27,5 @@ class TerrafundReportReminder extends I18nMail
             ]);
 
         $this->link = '/project/' . $projectUuid . '/reporting-task/' . $reportingTaskUuid;
-
-        $this->transactional = true;
     }
 }

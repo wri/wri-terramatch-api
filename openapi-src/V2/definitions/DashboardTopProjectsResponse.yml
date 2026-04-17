@@ -1,3 +1,0 @@
-properties:
-  data:
-    $ref: './DashboardTopProjectsData.yml'

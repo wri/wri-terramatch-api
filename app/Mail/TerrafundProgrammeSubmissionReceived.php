@@ -13,6 +13,5 @@ class TerrafundProgrammeSubmissionReceived extends I18nMail
             ->setParams(['{name}' => e($name)])
             ->setCta('terrafund-programme-submission-received.cta');
         $this->link = '/admin/terrafundProgrammes/preview/?programmeId=' . $id;
-        $this->transactional = true;
     }
 }
