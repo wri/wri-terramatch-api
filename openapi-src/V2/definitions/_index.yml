@@ -22,18 +22,6 @@ V2FileGallery:
   $ref: './V2FileGallery.yml'
 V2TreeSpeciesRead:
   $ref: './V2TreeSpeciesRead.yml'
-V2LeadershipsCreate:
-  $ref: './V2LeadershipsCreate.yml'
-V2LeadershipsUpdate:
-  $ref: './V2LeadershipsUpdate.yml'
-V2LeadershipsRead:
-  $ref: './V2LeadershipsRead.yml'
-V2OwnershipStakeCreate:
-  $ref: './V2OwnershipStakeCreate.yml'
-V2OwnershipStakeRead:
-  $ref: './V2OwnershipStakeRead.yml'
-V2OwnershipStakeUpdate:
-  $ref: './V2OwnershipStakeUpdate.yml'
 V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
 Empty:
@@ -52,7 +40,3 @@ SitePolygon:
   $ref: './SitePolygon.yml'
 UserCreateComplete:
   $ref: './UserCreateComplete.yml'
-V2FinancialIndicatorsRead:
-  $ref: './V2FinancialIndicatorsRead.yml'
-V2FinancialIndicatorsUpdate:
-  $ref: './V2FinancialIndicatorsUpdate.yml'

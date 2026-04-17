@@ -13,16 +13,9 @@ use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperControl
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
-use App\Http\Controllers\V2\FinancialIndicators\UpsertFinancialIndicatorsController;
 use App\Http\Controllers\V2\FinancialReports\ExportFinancialReportController;
 use App\Http\Controllers\V2\Forms\ExportFormSubmissionController;
-use App\Http\Controllers\V2\Leaderships\DeleteLeadershipsController;
-use App\Http\Controllers\V2\Leaderships\StoreLeadershipsController;
-use App\Http\Controllers\V2\Leaderships\UpdateLeadershipsController;
 use App\Http\Controllers\V2\Organisations\AdminExportOrganisationsController;
-use App\Http\Controllers\V2\OwnershipStake\DeleteOwnershipStakeController;
-use App\Http\Controllers\V2\OwnershipStake\StoreOwnershipStakeController;
-use App\Http\Controllers\V2\OwnershipStake\UpdateOwnershipStakeController;
 use App\Http\Controllers\V2\SrpReports\ExportSrpReportController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
@@ -58,20 +51,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 
 /** NON ADMIN ROUTES */
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
-
-Route::prefix('ownership-stake')->group(function () {
-    Route::post('/', StoreOwnershipStakeController::class);
-    Route::patch('/{ownershipStake}', UpdateOwnershipStakeController::class);
-    Route::delete('/{ownershipStake}', DeleteOwnershipStakeController::class);
-});
-
-Route::prefix('leaderships')->group(function () {
-    Route::post('/', StoreLeadershipsController::class);
-    Route::delete('/{leaderships}', DeleteLeadershipsController::class);
-    Route::patch('/{leaderships}', UpdateLeadershipsController::class);
-});
-
-Route::patch('financial-indicators', UpsertFinancialIndicatorsController::class);
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
