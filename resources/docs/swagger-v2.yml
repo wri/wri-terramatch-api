@@ -3170,14 +3170,3 @@ paths:
                 type: string
               financial_year_start_month:
                 type: integer
-  /v2/disturbance-reports/export:
-    get:
-      summary: Export disturbance reports
-      tags:
-        - V2 disturbance reports
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-      operationId: get-v2-disturbance-reports-export

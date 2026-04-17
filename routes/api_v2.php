@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
-use App\Http\Controllers\V2\DisturbanceReports\ExportDisturbanceReportController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
@@ -72,7 +71,6 @@ Route::prefix('projects')->group(function () {
 });
 
 Route::get('applications/{application}/export', ExportApplicationController::class);
-Route::get('disturbance-reports/export', ExportDisturbanceReportController::class);
 Route::get('sites/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
 Route::get('nurseries/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
