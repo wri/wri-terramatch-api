@@ -134,6 +134,7 @@ return [
                 'org-bioeconomy-description' => ['property' => 'bioeconomy_description', 'label' => 'Bioeconomy description', 'input_type' => 'long-text'],
                 'org-aggregate-employees' => ['property' => 'all_employees_aggregate', 'label' => 'Aggregate employees', 'input_type' => 'number'],
                 'pro-aggregate-associates' => ['property' => 'all_associates_aggregate', 'label' => 'Aggregate associates', 'input_type' => 'number'],
+                'org-currency' => ['property' => 'currency', 'label' => 'Local Currency', 'input_type' => 'select', 'multichoice' => false, 'option_list_key' => 'currencies'],
             ],
             'file-collections' => [
                 'org-fcol-cover' => ['property' => 'cover', 'label' => 'Cover image', 'input_type' => 'file', 'multichoice' => false],
