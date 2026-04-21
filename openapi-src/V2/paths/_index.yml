@@ -1,35 +1,6 @@
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
-/v2/admin/organisations/export:
-  get:
-    summary: Export CSV document of all time organaisations
-    tags:
-      - V2 Admin
-      - Export
-    produces:
-      - text/plain
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: file
-'/v2/admin/forms/submissions/{UUID}/export':
-  get:
-    summary: Export form submissions
-    tags:
-      - Form Submissions
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-    operationId: get-v2-admin-forms-submissions-uuid-export
 '/v2/admin/forms/applications/{UUID}/export':
   get:
     summary: Export CSV document of applications belonging to a funding programme
@@ -102,36 +73,3 @@
 /v2/{ENTITY}/{UUID}/export:
   get:
     $ref: './Exports/get-v2-entity-export-uuid.yml'
-/v2/financial-reports/export:
-  get:
-    summary: Export financial reports
-    tags:
-      - V2 financial reports
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-    operationId: get-v2-financial-reports-export
-/v2/disturbance-reports/export:
-  get:
-    summary: Export disturbance reports
-    tags:
-      - V2 disturbance reports
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-    operationId: get-v2-disturbance-reports-export
-/v2/srp-reports/export:
-  get:
-    summary: Export annual socio economic restoration reports
-    tags:
-      - V2 annual socio economic restoration reports
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: object
-    operationId: get-v2-annual-socio-economic-restoration-reports-export

@@ -190,7 +190,7 @@ class Organisation extends Model implements MediaModel
         'additional_financial_documentation' => [
             'validation' => 'general-documents',
             'multiple' => true,
-        ]
+        ],
     ];
 
     public $casts = [
