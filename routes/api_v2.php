@@ -10,7 +10,6 @@ use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperControlle
 use App\Http\Controllers\V2\Exports\ExportImageController;
 use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
-use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
 use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
@@ -29,7 +28,6 @@ use Illuminate\Support\Facades\Route;
 
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
-    Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
     Route::get('/{entity}/export/{framework}/pm', ProjectAdminExportController::class);
 
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
