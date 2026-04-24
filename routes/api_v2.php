@@ -1,16 +1,12 @@
 <?php
 
-use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperController;
-use App\Http\Controllers\V2\Exports\ExportImageController;
 use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
-use App\Http\Controllers\V2\Exports\GeneratePreSignedURLDownloadReportController;
-use App\Http\Controllers\V2\Exports\ProjectAdminExportController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
 use Illuminate\Support\Facades\Route;
@@ -28,15 +24,8 @@ use Illuminate\Support\Facades\Route;
 
 /** ADMIN ONLY ROUTES */
 Route::prefix('admin')->middleware(['admin'])->group(function () {
-    Route::get('/{entity}/presigned-url/{framework}', GeneratePreSignedURLDownloadReportController::class);
-    Route::get('/{entity}/export/{framework}/pm', ProjectAdminExportController::class);
-
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
-    });
-
-    Route::prefix('forms')->group(function () {
-        Route::get('applications/{fundingProgramme}/export', AdminExportApplicationController::class);
     });
 });
 
@@ -49,5 +38,3 @@ Route::get('applications/{application}/export', ExportApplicationController::cla
 Route::get('sites/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
 Route::get('nurseries/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
-
-Route::post('/export-image', ExportImageController::class);
