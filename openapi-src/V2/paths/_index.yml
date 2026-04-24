@@ -38,9 +38,6 @@
 /v2/users/resend:
   post:
     $ref: './Auth/post-v2-users-resend.yml'
-/v2/export-image:
-  post:
-    $ref: './Exports/post-v2-export-image.yml'
 /v2/projects/{UUID}/{ENTITY}/export:
   get:
     $ref: './Exports/get-v2-projects-uuid-entity-export.yml'

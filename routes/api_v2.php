@@ -6,7 +6,6 @@ use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperController;
-use App\Http\Controllers\V2\Exports\ExportImageController;
 use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
@@ -43,5 +42,3 @@ Route::get('applications/{application}/export', ExportApplicationController::cla
 Route::get('sites/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
 Route::get('nurseries/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
 Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
-
-Route::post('/export-image', ExportImageController::class);
