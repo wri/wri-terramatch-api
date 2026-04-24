@@ -26,8 +26,6 @@ V2FundingTypeRead:
   $ref: './V2FundingTypeRead.yml'
 Empty:
   type: object
-AuthChange:
-  $ref: './AuthChange.yml'
 AuthReset:
   $ref: './AuthReset.yml'
 AdminUserCreate:
@@ -38,5 +36,3 @@ V2ProjectInviteRead:
   $ref: './V2ProjectInviteRead.yml'
 SitePolygon:
   $ref: './SitePolygon.yml'
-UserCreateComplete:
-  $ref: './UserCreateComplete.yml'

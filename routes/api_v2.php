@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
@@ -29,9 +28,6 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
     });
 });
-
-/** NON ADMIN ROUTES */
-Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
