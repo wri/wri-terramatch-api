@@ -1,26 +1,6 @@
 /v2/admin/{ENTITY}/{UUID}/reminder:
   post:
     $ref: './Entity/post-v2-admin-entity-uuid-reminder.yml'
-'/v2/admin/forms/applications/{UUID}/export':
-  get:
-    summary: Export CSV document of applications belonging to a funding programme
-    description: The UUID provided is the Funding Programme ID that the applications are for
-    operationId: get-v2-admin-forms-applications-UUID-export
-    tags:
-      - Export
-      - V2 Application
-    produces:
-      - text/plain
-    parameters:
-      - type: string
-        name: UUID
-        in: path
-        required: true
-    responses:
-      '200':
-        description: OK
-        schema:
-          type: file
 '/v2/applications/{UUID}/export':
   get:
     summary: Export CSV document of an application

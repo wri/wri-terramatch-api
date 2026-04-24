@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\V2\Applications\AdminExportApplicationController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
@@ -29,10 +28,6 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->middleware(['admin'])->group(function () {
     ModelInterfaceBindingMiddleware::with(EntityModel::class, function () {
         Route::post('/{entity}/reminder', AdminSendReminderController::class);
-    });
-
-    Route::prefix('forms')->group(function () {
-        Route::get('applications/{fundingProgramme}/export', AdminExportApplicationController::class);
     });
 });
 
