@@ -6,7 +6,6 @@ use App\Http\Controllers\V2\Entities\AdminSendReminderController;
 use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperController;
-use App\Http\Controllers\V2\Exports\ExportProjectEntityAsProjectDeveloperController;
 use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
@@ -35,7 +34,6 @@ Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutM
 
 Route::prefix('projects')->group(function () {
     Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
-    Route::get('/{project}/{entity}/export', ExportProjectEntityAsProjectDeveloperController::class);
 });
 
 Route::get('applications/{application}/export', ExportApplicationController::class);
