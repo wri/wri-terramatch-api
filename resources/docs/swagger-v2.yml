@@ -2374,26 +2374,6 @@ paths:
       responses:
         '200':
           description: OK
-  '/v2/admin/forms/applications/{UUID}/export':
-    get:
-      summary: Export CSV document of applications belonging to a funding programme
-      description: The UUID provided is the Funding Programme ID that the applications are for
-      operationId: get-v2-admin-forms-applications-UUID-export
-      tags:
-        - Export
-        - V2 Application
-      produces:
-        - text/plain
-      parameters:
-        - type: string
-          name: UUID
-          in: path
-          required: true
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: file
   '/v2/applications/{UUID}/export':
     get:
       summary: Export CSV document of an application
@@ -2614,100 +2594,6 @@ paths:
           description: OK
           schema:
             type: object
-  /v2/export-image:
-    post:
-      operationId: exportImage
-      summary: Download an image from a provided URL
-      tags:
-        - V2 Exports
-      consumes:
-        - application/json
-      produces:
-        - image/jpeg
-      parameters:
-        - in: body
-          name: body
-          description: JSON object containing the image URL.
-          required: true
-          schema:
-            type: object
-            required:
-              - uuid
-            properties:
-              uuid:
-                type: string
-                description: The URL of the image to be downloaded.
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: file
-        '400':
-          description: Invalid URL provided
-        '500':
-          description: Server error
-  '/v2/admin/{ENTITY}/export/{FRAMEWORK}/pm':
-    get:
-      operationId: get-v2-admin-entity-export-framework-pm.yml
-      summary: Export entities data for project manager
-      tags:
-        - V2 Projects
-        - V2 Sites
-        - V2 Nurseries
-        - V2 Project Reports
-        - V2 Site Reports
-        - V2 Nursery Reports
-        - Exports
-      parameters:
-        - type: string
-          name: ENTITY
-          in: path
-          required: true
-          description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
-        - type: string
-          name: FRAMEWORK
-          in: path
-          required: true
-          description: allowed values terrafund/ppc and more frameworks
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              url:
-                type: string
-  '/v2/admin/{ENTITY}/presigned-url/{FRAMEWORK}':
-    get:
-      operationId: get-v2-admin-entity-presigned-url-framework.yml
-      summary: Export entities data
-      tags:
-        - V2 Projects
-        - V2 Sites
-        - V2 Nurseries
-        - V2 Project Reports
-        - V2 Site Reports
-        - V2 Nursery Reports
-        - Exports
-      parameters:
-        - type: string
-          name: ENTITY
-          in: path
-          required: true
-          description: allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
-        - type: string
-          name: FRAMEWORK
-          in: path
-          required: true
-          description: allowed values terrafund/ppc
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              url:
-                type: string
   '/v2/projects/{UUID}/{ENTITY}/export':
     get:
       operationId: get-v2-projects-uuid-entity-export.yml
