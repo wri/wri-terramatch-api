@@ -38,6 +38,3 @@
 /v2/users/resend:
   post:
     $ref: './Auth/post-v2-users-resend.yml'
-/v2/{ENTITY}/{UUID}/export:
-  get:
-    $ref: './Exports/get-v2-entity-export-uuid.yml'
