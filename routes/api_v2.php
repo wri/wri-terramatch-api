@@ -3,10 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\V2\Applications\ExportApplicationController;
 use App\Http\Controllers\V2\Entities\AdminSendReminderController;
-use App\Http\Controllers\V2\Exports\ExportAllNurseryDataAsProjectDeveloperController;
-use App\Http\Controllers\V2\Exports\ExportAllProjectDataAsProjectDeveloperController;
-use App\Http\Controllers\V2\Exports\ExportAllSiteDataAsProjectDeveloperController;
-use App\Http\Controllers\V2\Exports\ExportReportEntityAsProjectDeveloperController;
 use App\Http\Middleware\ModelInterfaceBindingMiddleware;
 use App\Models\V2\EntityModel;
 use Illuminate\Support\Facades\Route;
@@ -32,11 +28,4 @@ Route::prefix('admin')->middleware(['admin'])->group(function () {
 /** NON ADMIN ROUTES */
 Route::post('/users/resend', [AuthController::class, 'resendByEmail'])->withoutMiddleware('auth:service-api-key,api');
 
-Route::prefix('projects')->group(function () {
-    Route::get('/{project}/export', ExportAllProjectDataAsProjectDeveloperController::class);
-});
-
 Route::get('applications/{application}/export', ExportApplicationController::class);
-Route::get('sites/{site}/export', ExportAllSiteDataAsProjectDeveloperController::class);
-Route::get('nurseries/{nursery}/export', ExportAllNurseryDataAsProjectDeveloperController::class);
-Route::get('/{entity}/{uuid}/export', ExportReportEntityAsProjectDeveloperController::class);
