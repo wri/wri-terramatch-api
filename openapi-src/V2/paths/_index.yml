@@ -17,12 +17,3 @@
         description: OK
         schema:
           type: file
-/auth/send-login-details:
-  post:
-    $ref: './Auth/post-auth-send-login-details.yml'
-/auth/mail:
-  get:
-    $ref: './Auth/get-auth-mail.yml'
-/auth/store:
-  post:
-    $ref: './Auth/post-auth-store.yml'
